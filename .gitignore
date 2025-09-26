@@ -1,0 +1,9 @@
+buff_auto_notification/__pycache__/
+
+buff_auto_notification/.test_files
+
+buff_auto_notification/configs/
+
+buff_auto_notification/shared_market_cache/
+
+buff_auto_notification/.cursor/

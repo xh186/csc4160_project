@@ -1,1 +1,0 @@
-python check.py --checklist_file 'checklist.json' --output_file 'results.json' --cookie 'session=1-FiJeU3BmPRlcVOmxnUIV_vWpRjadyFamA406fq3b097b2019559149'

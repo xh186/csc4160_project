@@ -18,6 +18,7 @@ import requests
 import random
 import copy
 
+from urllib.parse import urlencode
 
 def get_ua():
     first_num = random.randint(55, 62)
@@ -53,12 +54,11 @@ class BuffAccount:
 
     def __init__(self, buffcookie, user_agent=get_ua()):
         self.session = requests.session()
-        self.session.headers = {'User-Agent': user_agent}
-        headers = copy.deepcopy(self.session.headers)
-        headers['Cookie'] = buffcookie
+        # Ensure all subsequent requests carry UA and Cookie
+        self.session.headers = {'User-Agent': user_agent, 'Cookie': buffcookie}
         try:
             self.username = json.loads(
-                self.session.get('https://buff.163.com/account/api/user/info', headers=headers).text).get('data').get(
+                self.session.get('https://buff.163.com/account/api/user/info').text).get('data').get(
                 'nickname')
         except AttributeError:
             raise ValueError('Buff登录失败！请稍后再试或检查cookie填写是否正确.')
@@ -83,6 +83,80 @@ class BuffAccount:
             'game': game_name
         }).text).get('data').get('suggestions')
 
+    def search_goods_list(self, key: str, game_name: str = 'dota2', page_num: int = 1):
+            """
+            根据关键词和游戏名称搜索Buff市场的商品列表。
+
+            Args:
+                key (str): 搜索关键词。
+                game_name (str): 游戏名称，默认为 'dota2'。
+                page_num (int): 页码，默认为 1。
+
+            Returns:
+                dict: 包含商品列表数据的字典。
+            """
+
+            url = 'https://buff.163.com/api/market/goods'
+            
+            params = {
+                'game': game_name,
+                'page_num': page_num,
+                'search': key,
+                'tab': 'selling',
+                '_': int(time.time() * 1000)
+            }
+            
+            response = self.session.get(url, params=params)
+            
+            if response.status_code != 200:
+                print(f"Error: Status code {response.status_code}")
+                print(f"Response content: {response.text}")
+                return None
+                
+            try:
+                data = json.loads(response.text)
+                return data.get('data').get('items')
+            except json.JSONDecodeError as e:
+                print(f"JSON Decode Error: {e}")
+                print(f"Failed to decode JSON from response: {response.text}")
+                return None
+    def get_goods_info(self, goods_id: str, game_name: str = 'dota2'):
+            """
+            根据 goods_id 获取指定商品的信息。
+
+            返回包含 'items' 与 'goods_infos' 的字典：
+            - items: 列表，与 search_goods_list 的 items 结构一致
+            - goods_infos: 字典，含有 market_hash_name 和 name 等元信息
+            """
+            url = 'https://buff.163.com/api/market/goods'
+            params = {
+                'game': game_name,
+                'goods_id': goods_id,
+                'tab': 'selling',
+                '_': int(time.time() * 1000)
+            }
+            try:
+                response = self.session.get(url, params=params)
+            except Exception as e:
+                print(f"Request error in get_goods_info: {e}")
+                return None
+
+            if response.status_code != 200:
+                print(f"Error: Status code {response.status_code}")
+                print(f"Response content: {response.text}")
+                return None
+
+            try:
+                data = json.loads(response.text)
+                payload = data.get('data', {})
+                return {
+                    'items': payload.get('items'),
+                    'goods_infos': payload.get('goods_infos')
+                }
+            except json.JSONDecodeError as e:
+                print(f"JSON Decode Error: {e}")
+                print(f"Failed to decode JSON from response: {response.text}")
+                return None
     def get_sell_order(self, goods_id, page_num=1, game_name='csgo', sort_by='default', proxy=None) -> dict:
         """
         获取指定饰品的在售商品
@@ -197,3 +271,5 @@ class BuffAccount:
 
     def get_steam_trade(self) -> dict:
         return json.loads(self.session.get("https://buff.163.com/api/market/steam_trade").text).get('data')
+
+    

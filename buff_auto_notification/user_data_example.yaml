@@ -1,0 +1,35 @@
+password_hash: 67dafc9ecaa7d08d35bc0ab67dde6ac29aec6faf70c17266be868f097d262dc1
+buff_cookies: 'session=xxxxx'
+notification_settings:
+  email: 'your_email@example.com'  # 替换成你的邮箱地址
+  check_frequency_minutes: 30 # 不要太小！
+watchlist:
+  767575: # 物品ID: 收获之犬护肩
+    conditions:
+      # 条件 1: 价格阈值条件
+      # 当 sell_min_price 低于 1.00 元时触发通知
+      - condition_type: 'price_threshold'
+        target_field: 'sell_min_price'
+        operator: '<'
+        value: 1.00
+
+      # 条件 2: 价格跌幅条件
+      # 当 sell_min_price 在过去 24 小时内跌幅超过 50% 时触发通知
+      - condition_type: 'price_change'
+        target_field: 'sell_min_price'
+        time_window_minutes: 1440 # 24小时 = 1440分钟
+        change_type: 'percentage'
+        change_threshold: -50
+
+      # 条件 3: 在售数量阈值条件
+      # 当 sell_num (在售数量) 小于 5 时触发通知
+      - condition_type: 'count_threshold'
+        target_field: 'sell_num'
+        operator: '<'
+        value: 5
+
+      # 条件 4: AI 智能判断条件
+      # 将判断权交给 AI，以识别异常价格波动
+      - condition_type: 'ai_evaluation'
+        ai_evaluator_id: 'price_analyst_v1'
+        prompt: "分析'收获之犬护肩'的价格趋势，如果存在不寻常的、可能预示着即将大跌的波动，请判断为真。"

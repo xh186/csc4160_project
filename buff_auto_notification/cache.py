@@ -183,11 +183,15 @@ class MarketCache:
         
         filenames_to_load = None
         if keys:
-            filenames_to_load = {
-                self._get_filename({'id': key}) if isinstance(key, int) 
-                else self._get_filename({'market_hash_name': key}) 
-                for key in keys
-            }
+            filenames_to_load = set()
+            for key in keys:
+                # Try to convert to int for ID-based lookup
+                try:
+                    int_key = int(key)
+                    filenames_to_load.add(str(int_key))
+                except (ValueError, TypeError):
+                    # If not a number, treat as market_hash_name
+                    filenames_to_load.add(key)
         
         start_dt = datetime.fromisoformat(start_time) if start_time else None
         end_dt = datetime.fromisoformat(end_time) if end_time else None

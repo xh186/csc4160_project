@@ -42,13 +42,8 @@ class BuffAutoNotificationUser:
         else:
             self._handle_login(password)
         
-        cookies = self.user_data.get('buff_cookies', '')
-
-        try:
-            self.buff = BuffAccount(buffcookie=cookies)
-        except Exception as e:
-            raise ValueError(f"Failed to initialize BuffAccount. The provided cookies may be invalid or expired. Please update them. Original error: {e}")
         self.cache_manager = self._SHARED_CACHE_MANAGER
+        self.buff = None
 
     def _load_server_config(self):
         """Loads server configuration from a YAML file if not already loaded."""
@@ -130,6 +125,7 @@ class BuffAutoNotificationUser:
         """Updates the user's Buff account cookies."""
         self.user_data['buff_cookies'] = cookies
         self._save_user_data()
+        self.buff = None
         print("Buff cookies updated.")
 
     def edit_user_settings(self, settings: Dict[str, Any]):
@@ -137,12 +133,23 @@ class BuffAutoNotificationUser:
         self.user_data['notification_settings'].update(settings)
         self._save_user_data()
 
+    def _ensure_buff_account(self):
+        """Ensures BuffAccount is initialized with valid cookies."""
+        if self.buff is None:
+            cookies = self.user_data.get('buff_cookies', '')
+            if not cookies:
+                raise ValueError("Buff cookies not set. Please update your cookies first.")
+            try:
+                self.buff = BuffAccount(buffcookie=cookies)
+            except Exception as e:
+                raise ValueError(f"Failed to initialize BuffAccount. The provided cookies may be invalid or expired. Please update them. Original error: {e}")
+
     def search_and_cache(self, keyword: str, game: str):
         """
         Searches for items and updates the shared cache.
         Returns the API response.
         """
-        # Use market search by name; server refresh uses market_hash_name for consistency
+        self._ensure_buff_account()
         res = self.buff.search_goods_list(key=keyword, game_name=game)
         if res:
             self._SHARED_CACHE_MANAGER.upsert_cache(res)
@@ -164,3 +171,47 @@ class BuffAutoNotificationUser:
         elif operation == 'remove':
             self.user_data['watchlist'].pop(goods_id, None)
         self._save_user_data()
+
+    def get_item_info(self, item_id: str) -> Dict[str, Any]:
+        """
+        Retrieves item information from the shared cache.
+
+        Args:
+            item_id: The unique ID of the item to retrieve.
+
+        Returns:
+            A dictionary containing:
+            - market_hash_name: The market hash name of the item
+            - name: The display name of the item
+            - icon_path: The local path to the item's icon image
+            - icon_url: The original icon URL from the API
+
+        Raises:
+            FileNotFoundError: If the item is not found in the cache.
+            ValueError: If the item data is invalid.
+        """
+        cached_items = self.cache_manager.load_cache(keys=[item_id])
+        
+        if not cached_items:
+            raise FileNotFoundError(f"Item with ID '{item_id}' not found in cache.")
+        
+        item_data = cached_items[0]
+        
+        market_hash_name = item_data.get('market_hash_name', '')
+        name = item_data.get('name', '')
+        
+        goods_info = item_data.get('goods_info', {})
+        icon_url = goods_info.get('icon_url', '')
+        
+        cache_dir = self._SERVER_CONFIG.get('shared_cache_dir', 'shared_market_cache')
+        icon_path = os.path.join(cache_dir, 'images', f'{item_id}.jpg')
+        
+        if not os.path.exists(icon_path):
+            icon_path = None
+        
+        return {
+            'market_hash_name': market_hash_name,
+            'name': name,
+            'icon_path': icon_path,
+            'icon_url': icon_url
+        }

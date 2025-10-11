@@ -215,7 +215,8 @@ class BuffAutoNotificationServer:
                                 print(f"get_goods_info lookup failed for {goods_id}: {e}")
 
                         if api_response:
-                            user_instance.cache_manager.upsert_cache(api_response)
+                            items = api_response.get('items', []) if isinstance(api_response, dict) else api_response
+                            user_instance.cache_manager.upsert_cache(items)
                             cached_items = user_instance.cache_manager.load_cache(keys=[key])
                         else:
                             print(f"Failed to refresh cache for {goods_id}: unable to resolve a valid search key")
@@ -228,7 +229,8 @@ class BuffAutoNotificationServer:
                             self._send_email(to_email, subject, content, debug_mode=not bool(to_email))
                             continue
                     
-                    if not cached_items: continue
+                    if not cached_items: 
+                        continue
                     cached_item = cached_items[0]
 
                     for condition in item_settings.get('conditions', []):

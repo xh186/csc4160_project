@@ -1,5 +1,5 @@
 password_hash: 67dafc9ecaa7d08d35bc0ab67dde6ac29aec6faf70c17266be868f097d262dc1
-buff_cookies: 'session=xxxxx'
+buff_cookies: 'session=1-WHYHWejFSLUrn8oRkuT66enCu8dS_vK8I6DFQKhfeXd_2024630127'
 notification_settings:
   email: 'your_email@example.com'  # 替换成你的邮箱地址
   check_frequency_minutes: 30 # 不要太小！

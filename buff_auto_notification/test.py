@@ -37,7 +37,7 @@ def test_user_configuration(user):
         return False
     
     try:
-        user.update_buff_cookies(f"session=<fill in>")
+        user.update_buff_cookies(f"session=1-8BxiiSgotmnnpnwKp_GhpW4VvaV4Lw-kurA2CUodRJMQ2019518984")
         print("✓ Buff cookies updated")
         
         user.edit_user_settings({
@@ -57,7 +57,7 @@ def test_user_configuration(user):
             ]
         }
         
-        user.edit_watchlist('add', '965545', watchlist_settings)
+        user.edit_watchlist('add', '42583', watchlist_settings)
         print("✓ Watchlist item added")
         
         return True

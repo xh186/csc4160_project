@@ -1,0 +1,72 @@
+{
+    "static": {
+        "can_search_by_tournament": false,
+        "appid": 570,
+        "goods_info": {
+            "icon_url": "https://g.fp.ps.netease.com/market/file/5caac51fa7f252065413a8ccNNLiieDN02?fop=imageView/6/f/webp/q/75",
+            "steam_price": "1.95",
+            "item_id": null,
+            "info": {
+                "tags": {
+                    "rarity": {
+                        "id": 340,
+                        "category": "rarity",
+                        "internal_name": "immortal",
+                        "localized_name": "不朽"
+                    },
+                    "hero": {
+                        "id": 235,
+                        "category": "hero",
+                        "internal_name": "npc_dota_hero_weaver",
+                        "localized_name": "编织者"
+                    },
+                    "slot": {
+                        "id": 182,
+                        "category": "slot",
+                        "internal_name": "head",
+                        "localized_name": "头部"
+                    },
+                    "type": {
+                        "id": 194,
+                        "category": "type",
+                        "internal_name": "wearable",
+                        "localized_name": "可佩带"
+                    }
+                }
+            },
+            "steam_price_cny": "13.9",
+            "original_icon_url": "http://g.fp.ps.netease.com/market/file/59a027f8143cfa4261169e4ecBLKvq7Z?fop=imageView/6/f/webp/q/75"
+        },
+        "short_name": "亲笔签名 腥红之触",
+        "id": 757794,
+        "description": null,
+        "market_hash_name": "Autographed Crimson Cyrridae",
+        "name": "亲笔签名 腥红之触",
+        "game": "dota2",
+        "steam_market_url": "https://steamcommunity.com/market/listings/570/Autographed%20Crimson%20Cyrridae"
+    },
+    "snapshots": {
+        "2025-11-05T12:57:13.059972": {
+            "sell_min_price": "9.16",
+            "keychain_color_img": null,
+            "buy_num": 1,
+            "sell_num": 4,
+            "pre_sell_min_price": "0",
+            "auction_num": 0,
+            "bookmarked": false,
+            "buy_max_price": "4.5",
+            "min_security_price": "0",
+            "has_buff_price_history": true,
+            "is_charm": false,
+            "rent_num": 0,
+            "quick_price": "9.15",
+            "min_rent_unit_price": "0",
+            "sell_reference_price": "9.16",
+            "can_bargain": true,
+            "pre_sell_num": 0,
+            "market_min_price": "0",
+            "rent_unit_reference_price": "0.02",
+            "transacted_num": 0
+        }
+    }
+}

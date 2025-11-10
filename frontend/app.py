@@ -19,19 +19,19 @@ def serve_static(path):
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.json
-    phone = data.get('phone')
+    email = data.get('email')
     password = data.get('password')
     
-    result = register_api(phone, password)
+    result = register_api(email, password)
     return jsonify(result)
 
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.json
-    phone = data.get('phone')
+    email = data.get('email')
     password = data.get('password')
     
-    result = login_api(phone, password)
+    result = login_api(email, password)
     return jsonify(result)
 
 if __name__ == '__main__':

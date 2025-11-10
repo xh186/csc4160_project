@@ -102,17 +102,17 @@ class UserRegistration:
         
         return True, "验证成功"
     
-    def get_user_data(self, phone: str) -> Optional[Dict[str, Any]]:
+    def get_user_data(self, email: str) -> Optional[Dict[str, Any]]:
         """
         获取用户数据
         
         Args:
-            phone: 用户手机号
+            email: 用户邮箱（作为用户名）
             
         Returns:
             Optional[Dict[str, Any]]: 用户数据字典，如果用户不存在则返回 None
         """
-        config_path = os.path.join(self.config_dir, phone, 'user_data.yaml')
+        config_path = os.path.join(self.config_dir, email, 'user_data.yaml')
         if not os.path.exists(config_path):
             return None
         
@@ -150,37 +150,37 @@ class UserRegistration:
 
 
 # 为前端提供的 API 接口
-def register_api(phone: str, password: str) -> Dict[str, Any]:
+def register_api(email: str, password: str) -> Dict[str, Any]:
     """
     用户注册 API
     
     Args:
-        phone: 用户手机号
+        email: 用户邮箱
         password: 用户密码
         
     Returns:
         Dict[str, Any]: 包含状态和消息的响应字典
     """
     registration = UserRegistration()
-    success, message = registration.register_user(phone, password)
+    success, message = registration.register_user(email, password)
     return {
         'success': success,
         'message': message
     }
 
-def login_api(phone: str, password: str) -> Dict[str, Any]:
+def login_api(email: str, password: str) -> Dict[str, Any]:
     """
     用户登录 API
     
     Args:
-        phone: 用户手机号
+        email: 用户邮箱
         password: 用户密码
         
     Returns:
         Dict[str, Any]: 包含状态、消息和用户数据的响应字典
     """
     registration = UserRegistration()
-    success, message = registration.verify_user(phone, password)
+    success, message = registration.verify_user(email, password)
     
     response = {
         'success': success,
@@ -188,7 +188,7 @@ def login_api(phone: str, password: str) -> Dict[str, Any]:
     }
     
     if success:
-        user_data = registration.get_user_data(phone)
+        user_data = registration.get_user_data(email)
         if user_data:
             # 移除敏感信息
             if 'password_hash' in user_data:
@@ -203,18 +203,18 @@ if __name__ == "__main__":
     import sys
     
     if len(sys.argv) < 3:
-        print("用法: python registration.py [register|login] 手机号 密码")
+        print("用法: python registration.py [register|login] 邮箱 密码")
         sys.exit(1)
     
     action = sys.argv[1]
-    phone = sys.argv[2]
+    email = sys.argv[2]
     password = sys.argv[3] if len(sys.argv) > 3 else ""
     
     if action == "register":
-        result = register_api(phone, password)
+        result = register_api(email, password)
         print(f"注册结果: {result['success']}, 消息: {result['message']}")
     elif action == "login":
-        result = login_api(phone, password)
+        result = login_api(email, password)
         print(f"登录结果: {result['success']}, 消息: {result['message']}")
         if result['success'] and 'user_data' in result:
             print(f"用户数据: {result['user_data']}")

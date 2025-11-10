@@ -9,10 +9,13 @@ from registration import UserRegistration
 from query_input import QueryInput
 from server import BuffAutoNotificationServer
 from BuffApiPublic import BuffAccount
+from cache import MarketCache
 
 app = Flask(__name__, 
             static_folder='../frontend/static',
             template_folder='../frontend/templates')
+
+SHARED_CACHE_MANAGER = MarketCache(cache_dir="./shared_market_cache")
 
 # 获取项目根目录
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -54,19 +57,19 @@ def start_query_server(username):
         # 创建并启动查询服务器，传入当前用户名
         server = BuffAutoNotificationServer()
         
-        # 设置用户名，确保使用正确的用户数据
-        user_data_path = os.path.join(USER_DATA_DIR, username, 'user_data.yaml')
-        if not os.path.exists(user_data_path):
-            return False, f"用户数据文件不存在: {user_data_path}"
+        # # 设置用户名，确保使用正确的用户数据
+        # user_data_path = os.path.join(USER_DATA_DIR, username, 'user_data.yaml')
+        # if not os.path.exists(user_data_path):
+        #     return False, f"用户数据文件不存在: {user_data_path}"
             
-        # 加载用户数据
-        with open(user_data_path, 'r', encoding='utf-8') as f:
-            user_data = yaml.safe_load(f)
+        # # 加载用户数据
+        # with open(user_data_path, 'r', encoding='utf-8') as f:
+        #     user_data = yaml.safe_load(f)
             
-        # 设置用户配置
-        server.user_name = username
-        server.user_data_path = user_data_path
-        
+        # # 设置用户配置
+        # server.user_name = username
+        # server.user_data_path = user_data_path
+                
         # 在新线程中启动服务器
         def run_server():
             server.start()  # 移除username参数，使用之前设置的用户配置
@@ -331,6 +334,8 @@ def api_search_by_name():
         # 调用 Buff API 搜索
         buff = BuffAccount(buffcookie=buff_cookies)
         items = buff.search_goods_list(key=keyword, game_name=game) or []
+        print(f"Search results for user {username}, keyword '{keyword}': {items}")
+        SHARED_CACHE_MANAGER.upsert_cache(items)
         # 规范为列表
         if isinstance(items, dict):
             items = items.get('items', [])

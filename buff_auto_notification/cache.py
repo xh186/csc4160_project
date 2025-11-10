@@ -211,7 +211,6 @@ class MarketCache:
             try:
                 with open(filepath, 'r', encoding='utf-8') as f:
                     data = json.load(f)
-
                     # Only support unified structure during development
                     if not (isinstance(data, dict) and isinstance(data.get('static'), dict) and isinstance(data.get('snapshots'), dict)):
                         continue

@@ -7,3 +7,5 @@ buff_auto_notification/configs/
 buff_auto_notification/shared_market_cache/
 
 buff_auto_notification/.cursor/
+
+shared_market_cache/

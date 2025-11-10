@@ -1,28 +1,11 @@
-buff_cookies: session=1-8BxiiSgotmnnpnwKp_GhpW4VvaV4Lw-kurA2CUodRJMQ2019518984
+buff_cookies: session=1-gr2f959EPPecvUX-M5bCOOLst1NShg37GHiDK9DSyHdF2019559149
 notification_settings:
   check_frequency_minutes: 30
   email: 238@qq.com
 password_hash: a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
 watchlist:
-  '15040':
-    conditions:
-    - condition_type: price_threshold
-      operator: '>'
-      target_field: sell_min_price
-      value: 10.0
+  '16995':
+    conditions: []
     game: dota2
-    goods_id: '15040'
-    item_name: 噬魔之王
-  '8541':
-    conditions:
-    - condition_type: price_threshold
-      operator: '>'
-      target_field: sell_min_price
-      value: 1.0
-    - condition_type: price_threshold
-      operator: <
-      target_field: sell_min_price
-      value: 100.0
-    game: dota2
-    goods_id: '8541'
-    item_name: 铭刻 光穴战腕
+    goods_id: '16995'
+    item_name: 冥灵 天游守卫长尾

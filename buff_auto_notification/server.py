@@ -46,6 +46,7 @@ class BuffAutoNotificationServer:
             return users
 
         for username in os.listdir(user_dir_base):
+            print(f"Loading user: {username}")
             user_path = os.path.join(user_dir_base, username)
             if not os.path.isdir(user_path):
                 continue
@@ -61,6 +62,12 @@ class BuffAutoNotificationServer:
             buff_client = None
             try:
                 buff_client = BuffAccount(buffcookie=cookies)
+                users[username] = type('ServerUser', (), {
+                    'username': username,
+                    'user_data': user_data,
+                    'buff': buff_client,
+                    'cache_manager': self.cache_manager,
+                })()
             except Exception as e:
                 # Notify user via email if configured; otherwise print for debug
                 to_email = (user_data or {}).get('notification_settings', {}).get('email')
@@ -71,20 +78,16 @@ class BuffAutoNotificationServer:
                     f"Error: {e}\n\n"
                     f"Please update your cookies in your user settings."
                 )
-                self._send_email(to_email, subject, content, debug_mode=not bool(to_email))
+                try :
+                    self._send_email(to_email, subject, content, debug_mode=not bool(to_email))
+                except Exception as email_e:
+                    print(f"Failed to send cookie invalid email to '{username}': {email_e}")
                 # Abort server startup since a user's cookies are invalid
-                raise RuntimeError(f"Failed to initialize BuffAccount for '{username}': {e}")
-
-            # Lightweight server-side user holder
-            users[username] = type('ServerUser', (), {
-                'username': username,
-                'user_data': user_data,
-                'buff': buff_client,
-                'cache_manager': self.cache_manager,
-            })()
-
-        print(f"Loaded {len(users)} user(s).")
-        return users
+                print(f"Failed to initialize BuffAccount for '{username}': {e}")
+        
+        if users:
+            print(f"Loaded {len(users)} user(s).")
+            return users
 
     def _setup_email_server(self):
         email_config = self.SERVER_CONFIG.get('email_settings', {})
@@ -140,7 +143,7 @@ class BuffAutoNotificationServer:
             if not watchlist:
                 print(f"User {user_instance.username} has no items in watchlist. Waiting...")
             else:
-                for goods_id, item_settings in watchlist.items():
+                for goods_id, metac_data in watchlist.items():
                     # Keys can be numeric id or market_hash_name. Try to coerce numeric ids.
                     key = None
                     try:
@@ -232,15 +235,20 @@ class BuffAutoNotificationServer:
                     if not cached_items: 
                         continue
                     cached_item = cached_items[0]
-
-                    for condition in item_settings.get('conditions', []):
-                        if self._evaluate_condition(condition, cached_item):
-                            subject = f"🔔 Buff Notification: {cached_item['name']} Price Alert!"
-                            content = self._generate_email_content(condition, cached_item)
-                            
-                            to_email = user_instance.user_data['notification_settings'].get('email')
-                            self._send_email(to_email, subject, content, debug_mode=not to_email)
-                            break
+                    print(f"cached_item for {goods_id}: {cached_item}")
+                    sell_min_price = cached_item.get("sell_min_price", "N/A")
+                    print(f"sell_min_price for {goods_id}: {sell_min_price}")
+                    
+                    conditions = metac_data.get('conditions', [])
+                    if conditions != []:
+                        for condition in conditions:
+                            if self._evaluate_condition(condition, cached_item):
+                                subject = f"🔔 Buff Notification: {cached_item['name']} Price Alert!"
+                                content = self._generate_email_content(condition, cached_item)
+                                
+                                to_email = user_instance.user_data['notification_settings'].get('email')
+                                self._send_email(to_email, subject, content, debug_mode=not to_email)
+                                break
 
                     time.sleep(api_call_delay)
 

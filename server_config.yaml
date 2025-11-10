@@ -1,0 +1,5 @@
+server_settings:
+  api_call_delay_seconds: 2
+  icon_download_delay_seconds: 0.5
+user_data_base_dir: configs
+shared_cache_dir: shared_market_cache

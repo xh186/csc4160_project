@@ -27,6 +27,8 @@ class BuffAutoNotificationServer:
         # Attach delay to cache manager for icon throttling within single upsert calls
         setattr(self.cache_manager, 'icon_download_delay_seconds', icon_delay)
         self.users: Dict[str, Any] = self._load_all_users()
+        self.stop_event = threading.Event()
+        self.threads: List[threading.Thread] = []
 
     def _load_server_config(self) -> Dict[str, Any]:
         try:
@@ -138,7 +140,7 @@ class BuffAutoNotificationServer:
         )
         print(f"Starting check thread for user {user_instance.username}. Frequency: {frequency} mins.")
 
-        while True:
+        while not self.stop_event.is_set():
             watchlist = user_instance.user_data.get('watchlist', {})
             if not watchlist:
                 print(f"User {user_instance.username} has no items in watchlist. Waiting...")
@@ -250,9 +252,11 @@ class BuffAutoNotificationServer:
                                 self._send_email(to_email, subject, content, debug_mode=not to_email)
                                 break
 
-                    time.sleep(api_call_delay)
+                    if self.stop_event.wait(api_call_delay):
+                        return
 
-            time.sleep(frequency * 60)
+            if self.stop_event.wait(frequency * 60):
+                break
 
     def _evaluate_condition(self, condition: Dict[str, Any], item_data: Dict[str, Any]) -> bool:
         condition_type = condition.get('condition_type')
@@ -303,12 +307,31 @@ class BuffAutoNotificationServer:
             thread = threading.Thread(target=self._check_user_watchlist, args=(user_instance,))
             thread.daemon = True
             thread.start()
-            
+            self.threads.append(thread)
+
         print("All user threads started. Server is running.")
         try:
-            while True:
-                time.sleep(3600)
+            while not self.stop_event.wait(3600):
+                pass
         except KeyboardInterrupt:
             print("Server is shutting down.")
+        finally:
             if self.email_server:
+                try:
+                    self.email_server.quit()
+                except Exception:
+                    pass
+
+    def stop(self):
+        self.stop_event.set()
+        for t in self.threads:
+            if t.is_alive():
+                try:
+                    t.join(timeout=5)
+                except Exception:
+                    pass
+        if self.email_server:
+            try:
                 self.email_server.quit()
+            except Exception:
+                pass

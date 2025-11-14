@@ -1,51 +1,51 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buff自动通知系统</title>
+    <title>Buff Auto Notification System</title>
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Buff自动通知系统</h1>
+        <h1>Buff Auto Notification System</h1>
         <div class="tabs">
-            <button class="tab-btn active" onclick="showTab('login')">登录</button>
-            <button class="tab-btn" onclick="showTab('register')">注册</button>
+            <button class="tab-btn active" onclick="showTab('login')">Login</button>
+            <button class="tab-btn" onclick="showTab('register')">Register</button>
         </div>
         
         <div id="login" class="tab-content active">
-            <h2>用户登录</h2>
+            <h2>User Login</h2>
             <form id="login-form">
                 <div class="form-group">
-                    <label for="login-email">账号（邮箱）</label>
+                    <label for="login-email">Account (Email)</label>
                     <input type="email" id="login-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="login-password">密码</label>
+                    <label for="login-password">Password</label>
                     <input type="password" id="login-password" name="password" required>
                 </div>
-                <button type="submit" class="btn">登录</button>
+                <button type="submit" class="btn">Login</button>
             </form>
             <div id="login-message" class="message"></div>
         </div>
         
         <div id="register" class="tab-content">
-            <h2>用户注册</h2>
+            <h2>User Registration</h2>
             <form id="register-form">
                 <div class="form-group">
-                    <label for="register-email">账号（邮箱）</label>
+                    <label for="register-email">Account (Email)</label>
                     <input type="email" id="register-email" name="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="register-password">密码</label>
+                    <label for="register-password">Password</label>
                     <input type="password" id="register-password" name="password" required>
                 </div>
                 <div class="form-group">
-                    <label for="register-confirm-password">确认密码</label>
+                    <label for="register-confirm-password">Confirm Password</label>
                     <input type="password" id="register-confirm-password" name="confirm-password" required>
                 </div>
-                <button type="submit" class="btn">注册</button>
+                <button type="submit" class="btn">Register</button>
             </form>
             <div id="register-message" class="message"></div>
         </div>

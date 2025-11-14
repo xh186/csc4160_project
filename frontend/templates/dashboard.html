@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buff自动通知系统 - 仪表盘</title>
+    <title>Buff Auto Notification System - Dashboard</title>
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
     <div class="container dashboard-container">
-        <h1>Buff自动通知系统 - 仪表盘</h1>
+        <h1>Buff Auto Notification System - Dashboard</h1>
         <div class="user-info">
-            <p>欢迎, <span id="username"></span></p>
-            <button id="logout-btn" class="btn btn-small">退出登录</button>
+            <p>Welcome, <span id="username"></span></p>
+            <button id="logout-btn" class="btn btn-small">Log Out</button>
         </div>
         
         <!-- Cookie信息区域 -->
         <div class="section cookie-section">
-            <h2>Cookie设置</h2>
+            <h2>Cookie Settings</h2>
             <div class="cookie-display">
-                <p>当前Cookie: <span id="current-cookie">加载中...</span></p>
+                <p>Current Cookie: <span id="current-cookie">Loading...</span></p>
             </div>
             <div class="cookie-update">
-                <input type="text" id="new-cookie" placeholder="输入新的Buff Cookie" class="cookie-input">
-                <button id="update-cookie-btn" class="btn">更新Cookie</button>
+                <input type="text" id="new-cookie" placeholder="Enter new Buff Cookie" class="cookie-input">
+                <button id="update-cookie-btn" class="btn">Update Cookie</button>
             </div>
             <div id="cookie-message" class="message"></div>
         </div>
@@ -30,23 +30,23 @@
         <div class="dashboard-sections">
             <!-- 查询条件输入分区 -->
             <div class="section">
-                <h2>添加商品监控</h2>
+                <h2>Add Item to Watchlist</h2>
                 <form id="query-form">
                     <div class="form-group">
-                        <label for="item-name">物品名称</label>
-                        <input type="text" id="item-name" name="item_name" placeholder="输入物品名称" required>
-                        <button type="button" id="search-name-btn" class="btn btn-small" style="margin-left:8px;">搜索</button>
+                        <label for="item-name">Item Name</label>
+                        <input type="text" id="item-name" name="item_name" placeholder="Enter item name" required>
+                        <button type="button" id="search-name-btn" class="btn btn-small" style="margin-left:8px;">Search</button>
                     </div>
                     <div class="form-group">
-                        <label for="candidate-names">候选结果 (选择一个)</label>
+                        <label for="candidate-names">Candidates (select one)</label>
                         <select id="candidate-names" name="candidate_names">
-                            <option value="">请先搜索并选择</option>
+                            <option value="">Please search and select first</option>
                         </select>
                     </div>
                     <div id="search-message" class="message"></div>
 
                     <div class="form-group">
-                        <label for="game">游戏</label>
+                        <label for="game">Game</label>
                         <select id="game" name="game">
                             <option value="dota2" selected>DOTA2</option>
                             <option value="csgo">CSGO</option>
@@ -54,43 +54,44 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="price-min">最低价格 (可选)</label>
+                        <label for="price-min">Min Price (optional)</label>
                         <input type="number" id="price-min" name="price_min" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label for="price-max">最高价格 (可选)</label>
+                        <label for="price-max">Max Price (optional)</label>
                         <input type="number" id="price-max" name="price_max" step="0.01">
                     </div>
                     <div class="form-group">
-                        <label for="sort-by">排序方式</label>
+                        <label for="sort-by">Sort By</label>
                         <select id="sort-by" name="sort_by">
-                            <option value="default">默认</option>
-                            <option value="price.asc">价格从低到高</option>
-                            <option value="price.desc">价格从高到低</option>
+                            <option value="default">Default</option>
+                            <option value="price.asc">Price: Low to High</option>
+                            <option value="price.desc">Price: High to Low</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn">添加到监控列表</button>
+                    <button type="submit" class="btn">Add to Watchlist</button>
                 </form>
                 <div id="query-message" class="message"></div>
             </div>
             
             <!-- 商品监控列表分区 -->
             <div class="section">
-                <h2>商品监控列表</h2>
+                <h2>Watchlist</h2>
                 <div class="watchlist-actions">
-                    <button id="refresh-watchlist" class="btn btn-small">刷新列表</button>
-                    <button id="start-query-btn" class="btn btn-small btn-primary">开始查询</button>
+                    <button id="refresh-watchlist" class="btn btn-small">Refresh List</button>
+                    <button id="start-query-btn" class="btn btn-small btn-primary">Start Query</button>
+                    <button id="stop-query-btn" class="btn btn-small btn-danger">Stop Query</button>
                 </div>
                 <div id="watchlist-container">
                     <table id="watchlist-table">
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>名称</th>
-                                <th>游戏</th>
-                                <th>上限</th>
-                                <th>下限</th>
-                                <th>操作</th>
+                                <th>Name</th>
+                                <th>Game</th>
+                                <th>Max</th>
+                                <th>Min</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="watchlist-body">

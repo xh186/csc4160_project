@@ -1,4 +1,4 @@
-buff_cookies: session=1-gr2f959EPPecvUX-M5bCOOLst1NShg37GHiDK9DSyHdF2019559149
+buff_cookies: session=1-TVxUPeBTRrAFuiPVjl7I62LA0BcSDDSLOGocvEamGMQa2024630127
 notification_settings:
   check_frequency_minutes: 30
   email: 238@qq.com
@@ -9,3 +9,12 @@ watchlist:
     game: dota2
     goods_id: '16995'
     item_name: 冥灵 天游守卫长尾
+  '768983':
+    conditions:
+    - condition_type: price_threshold
+      operator: '>'
+      target_field: sell_min_price
+      value: 20.0
+    game: dota2
+    goods_id: '768983'
+    item_name: 冥灵 剑心之遗

@@ -89,6 +89,26 @@ def start_query_server(username):
     except Exception as e:
         return False, f"启动查询服务失败: {str(e)}"
 
+def stop_query_server(username):
+    try:
+        info = query_servers.get(username)
+        if not info:
+            return False, "查询服务未启动"
+        server = info.get('server')
+        thread = info.get('thread')
+        if info.get('status') != 'running':
+            return True, "查询服务已停止"
+        server.stop()
+        if thread and thread.is_alive():
+            try:
+                thread.join(timeout=5)
+            except Exception:
+                pass
+        info['status'] = 'stopped'
+        return True, "查询服务已停止"
+    except Exception as e:
+        return False, f"停止查询服务失败: {str(e)}"
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -117,6 +137,18 @@ def api_start_query():
     # 启动查询服务
     success, message = start_query_server(username)
     
+    if success:
+        return jsonify({"status": "success", "message": message})
+    else:
+        return jsonify({"status": "error", "message": message})
+
+@app.route('/api/stop_query', methods=['POST'])
+def api_stop_query():
+    data = request.json
+    username = data.get('username')
+    if not username:
+        return jsonify({"status": "error", "message": "用户名不能为空"})
+    success, message = stop_query_server(username)
     if success:
         return jsonify({"status": "success", "message": message})
     else:
